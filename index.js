@@ -25,7 +25,7 @@ async function run() {
         const ordersCollection = database.collection('orders');
         // console.log(serviceCollection);
 
-        //GET API
+        //GET API allservices
         app.get('/services', async (req, res) => {
             const cursor = servicesCollection.find({});
             const services = await cursor.toArray();
@@ -35,7 +35,7 @@ async function run() {
         //GET single
         app.get('/services/:id', async (req, res) => {
             const id = req.params.id;
-            console.log('getting single', id)
+            // console.log('getting single', id)
             const query = { _id: ObjectId(id) };
             const service = await servicesCollection.findOne(query);
             res.json(service);
@@ -43,38 +43,57 @@ async function run() {
         //GET manage
         app.get('/manage/:id', async (req, res) => {
             const id = req.params.id;
-            console.log('manage', id)
+            // console.log('manage', id)
             const query = { _id: ObjectId(id) };
             const service = await servicesCollection.findOne(query);
             res.json(service);
         })
 
-        //POST API
+        //POST API addservices
         app.post('/services', async (req, res) => {
             const service = req.body;
-            console.log('hit the post api', service);
+            // console.log('hit the post api', service);
 
             const result = await servicesCollection.insertOne(service);
             console.log(result);
             res.json(result);
         });
 
-        //POST API orders
-        app.post('/orders', async (req, res) => {
+        //POST API addorders
+        app.post('/addOrder', async (req, res) => {
             const service = req.body;
-            console.log('hit the booking api', service);
+            // console.log('hit the booking api', service);
 
             const result = await ordersCollection.insertOne(service);
-            console.log(result);
+            // console.log(result);
             res.json(result);
         });
 
-        //DELETE API
-        app.delete('/services/:id', async (req, res) => {
+        //GET myorders
+        app.get('/myOrders/:email', async (req, res) => {
+            //console.log(req.params.email);
+
+            const result = await ordersCollection.find({ email: req.params.email }).toArray();
+            // console.log(result);
+            res.send(result);
+        });
+
+        //GET allOrders
+        app.get('/allOrders', async (req, res) => {
+            const cursor = ordersCollection.find({});
+            const result = await cursor.toArray();
+            res.send(result);
+        });
+
+
+        //DELETE API myOrder
+        app.delete('/deleteMyOrder/:id', async (req, res) => {
+            console.log(req.params.id);
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
-            const result = await servicesCollection.deleteOne(query);
-            res.json(result);
+            const result = await ordersCollection.deleteOne(query);
+            res.send(result);
+            // console.log(result);
         })
 
 
